@@ -1,0 +1,40 @@
+name: CI/CD Test Pipeline (OIDC)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  ECR_REPOSITORY: 100797573872.dkr.ecr.ap-northeast-2.amazonaws.com/tag-test-20250827
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. AWS OIDC 인증
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::100797573872:role/SAST-github-cicd-role
+          aws-region: ap-northeast-2
+
+      # 3. Docker 빌드
+      - name: Build Docker image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t <ECR_REPOSITORY>:$IMAGE_TAG .
+
+      # 4. Docker 푸시
+      - name: Push Docker image to ECR
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin <ECR_REPOSITORY>
+          docker push <ECR_REPOSITORY>:$IMAGE_TAG
