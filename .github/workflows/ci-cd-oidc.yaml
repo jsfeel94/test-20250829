@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  ECR_REPOSITORY: 100797573872.dkr.ecr.ap-northeast-2.amazonaws.com/tag-test-20250827
+  ECR_REPOSITORY: 100797573872.dkr.ecr.ap-northeast-2.amazonaws.com/jsfeel
 
 jobs:
   build-and-deploy:
