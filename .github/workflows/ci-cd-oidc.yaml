@@ -1,8 +1,8 @@
 name: CI/CD Test Pipeline (OIDC)
 
 on:
-  pull_request:
-    branches: [ "main" ]
+  push:
+    branches: [ "test" ]
 
 permissions:
   id-token: write   # OIDC 토큰 발급에 필수
